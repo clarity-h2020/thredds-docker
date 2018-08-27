@@ -1,4 +1,4 @@
-version: '3'
+version: '3.6'
 
 services:
   tds:
@@ -16,15 +16,21 @@ services:
         - type: volume
           source: webapps
           target: /usr/local/tomcat/webapps
-        - type: volume
-          source: conf
-          target: /usr/local/tomcat/conf/localhost  
+        #- type: volume
+        #  source: conf
+        #  target: /usr/local/tomcat/conf/Catalina/localhost
         - type: bind
           source: ./server.xml
           target: /usr/local/tomcat/conf/server.xml
         - type: bind
           source: ./tomcat-users.xml
           target: /usr/local/tomcat/conf/tomcat-users.xml
+        - type: bind
+          source: /docker/010-ngnix-proxy/data/certs/thredds.myclimateservice.eu/fullchain.pem
+          target: /usr/local/tomcat/conf/ssl.crt
+        - type: bind
+          source: /docker/010-ngnix-proxy/data/certs/thredds.myclimateservice.eu/key.pem
+          target: /usr/local/tomcat/conf/ssl.key
         #- type: bind
         #  source: /docker/010-ngnix-proxy/data/certs/thredds.myclimateservice.eu.crt
         #  target: /usr/local/tomcat/conf/ssl.crt
@@ -41,8 +47,12 @@ services:
           source: ./data
           target: /data
     env_file:
-      - "compose${THREDDS_COMPOSE_ENV_LOCAL}.env"
-
+      - "compose.env"
+    environment:
+        - VIRTUAL_HOST=${VIRTUAL_HOST}
+        - VIRTUAL_PORT=${VIRTUAL_PORT:-8080}
+        - LETSENCRYPT_HOST=${LETSENCRYPT_HOST}
+        - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
   ###
   # TDM
   # Not strictly part of this repo, but useful to have around
@@ -60,21 +70,21 @@ services:
         - type: volume
           source: webapps
           target: /usr/local/tomcat/webapps
-        - type: volume
-          source: conf
-          target: /usr/local/tomcat/conf/localhost  
+        #- type: volume
+        #  source: conf
+        #  target: /usr/local/tomcat/conf/Catalina/localhost
         - type: bind
           source: ./server.xml
           target: /usr/local/tomcat/conf/server.xml
         - type: bind
           source: ./tomcat-users.xml
           target: /usr/local/tomcat/conf/tomcat-users.xml
-        #- type: bind
-        #  source: /docker/010-ngnix-proxy/data/certs/thredds.myclimateservice.eu.crt
-        #  target: /usr/local/tomcat/conf/ssl.crt
-        #- type: bind
-        #  source: /docker/010-ngnix-proxy/data/certs/thredds.myclimateservice.eu.key
-        #  target: /usr/local/tomcat/conf/ssl.key
+        - type: bind
+          source: /docker/010-ngnix-proxy/data/certs/thredds.myclimateservice.eu/fullchain.pem
+          target: /usr/local/tomcat/conf/ssl.crt
+        - type: bind
+          source: /docker/010-ngnix-proxy/data/certs/thredds.myclimateservice.eu/key.pem
+          target: /usr/local/tomcat/conf/ssl.key
         - type: bind
           source: ./tds
           target: /usr/local/tomcat/content/thredds
@@ -87,17 +97,17 @@ services:
           source: ./tdm
           target: /usr/local/tomcat/content/tdm
     env_file:
-      - "compose${THREDDS_COMPOSE_ENV_LOCAL}.env"
+      - "compose.env"
       
- volumes:
-  conf:
-    name: ${COMPOSE_PROJECT_NAME}_tomcat_conf
-    driver: local
-  webapps:
-    name: ${COMPOSE_PROJECT_NAME}_tomcat_webapps
-    driver: local
+volumes:
+    conf:
+        name: ${COMPOSE_PROJECT_NAME}_tomcat_conf
+        driver: local
+    webapps:
+        name: ${COMPOSE_PROJECT_NAME}_tomcat_webapps
+        driver: local
       
- networks:
-  default:
-    external:
-      name: ${NETWORK:-clarity}
+networks:
+    default:
+        external:
+            name: ${NETWORK:-clarity}

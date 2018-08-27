@@ -1,6 +1,5 @@
-
 /content/
-/compose.env
+compose.env
 /tomcat-users.xml
 /logs
 /tds
