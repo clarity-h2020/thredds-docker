@@ -1,27 +1,45 @@
 version: '3'
 
 services:
-  thredds-quickstart:
+  tds:
     image: unidata/thredds-docker:latest
-    ports:
-      - "80:8080"
-      - "443:8443"
-      - "8443:8443"
-
-  thredds-production:
-    image: unidata/thredds-docker:latest
-    ports:
-      - "80:8080"
-      - "443:8443"
-      - "8443:8443"
-    container_name: thredds
+    #ports:
+    #  - "80:8080"
+    #  - "443:8443"
+    #  - "8443:8443"
+    container_name: ${COMPOSE_PROJECT_NAME}-tds
     volumes:
-      - /path/to/your/tomcat/logs/:/usr/local/tomcat/logs/
-      - /path/to/your/thredds/logs/:/usr/local/tomcat/content/thredds/logs/
-      - /path/to/your/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
-      - /path/to/your/thredds/directory:/usr/local/tomcat/content/thredds
-      - /path/to/your/data/directory1:/path/to/your/data/directory1
-      - /path/to/your/data/directory2:/path/to/your/data/directory2
+        - type: tmpfs
+          target: /tmp
+        - type: tmpfs
+          target: /usr/local/tomcat/temp
+        - type: volume
+          source: webapps
+          target: /usr/local/tomcat/webapps
+        - type: volume
+          source: conf
+          target: /usr/local/tomcat/conf/localhost  
+        - type: bind
+          source: ./server.xml
+          target: /usr/local/tomcat/conf/server.xml
+        - type: bind
+          source: ./tomcat-users.xml
+          target: /usr/local/tomcat/conf/tomcat-users.xml
+        #- type: bind
+        #  source: /docker/010-ngnix-proxy/data/certs/thredds.myclimateservice.eu.crt
+        #  target: /usr/local/tomcat/conf/ssl.crt
+        #- type: bind
+        #  source: /docker/010-ngnix-proxy/data/certs/thredds.myclimateservice.eu.key
+        #  target: /usr/local/tomcat/conf/ssl.key
+        - type: bind
+          source: ./logs/
+          target: /usr/local/tomcat/logs/
+        - type: bind
+          source: ./tds
+          target: /usr/local/tomcat/content/thredds
+        - type: bind
+          source: ./data
+          target: /data
     env_file:
       - "compose${THREDDS_COMPOSE_ENV_LOCAL}.env"
 
@@ -33,12 +51,53 @@ services:
 
   tdm:
     image: unidata/tdm-docker:latest
-    container_name: tdm
+    container_name: ${COMPOSE_PROJECT_NAME}-tdm
     volumes:
-      - /path/to/your/thredds/directory:/usr/local/tomcat/content/thredds
-      - /path/to/your/data/directory1:/path/to/your/data/directory1
-      # TDM logging non-configurable until 5.0 so you'll need tdm.sh and
-      # tdm.jar if you want to log outside the container :-(
-      - /path/to/your/tdm/logs:/usr/local/tomcat/content/tdm/
+        - type: tmpfs
+          target: /tmp
+        - type: tmpfs
+          target: /usr/local/tomcat/temp
+        - type: volume
+          source: webapps
+          target: /usr/local/tomcat/webapps
+        - type: volume
+          source: conf
+          target: /usr/local/tomcat/conf/localhost  
+        - type: bind
+          source: ./server.xml
+          target: /usr/local/tomcat/conf/server.xml
+        - type: bind
+          source: ./tomcat-users.xml
+          target: /usr/local/tomcat/conf/tomcat-users.xml
+        #- type: bind
+        #  source: /docker/010-ngnix-proxy/data/certs/thredds.myclimateservice.eu.crt
+        #  target: /usr/local/tomcat/conf/ssl.crt
+        #- type: bind
+        #  source: /docker/010-ngnix-proxy/data/certs/thredds.myclimateservice.eu.key
+        #  target: /usr/local/tomcat/conf/ssl.key
+        - type: bind
+          source: ./tds
+          target: /usr/local/tomcat/content/thredds
+        - type: bind
+          source: ./data
+          target: /data
+          # TDM logging non-configurable until 5.0 so you'll need tdm.sh and
+          # tdm.jar if you want to log outside the container :-(
+        - type: bind
+          source: ./tdm
+          target: /usr/local/tomcat/content/tdm
     env_file:
       - "compose${THREDDS_COMPOSE_ENV_LOCAL}.env"
+      
+ volumes:
+  conf:
+    name: ${COMPOSE_PROJECT_NAME}_tomcat_conf
+    driver: local
+  webapps:
+    name: ${COMPOSE_PROJECT_NAME}_tomcat_webapps
+    driver: local
+      
+ networks:
+  default:
+    external:
+      name: ${NETWORK:-clarity}
