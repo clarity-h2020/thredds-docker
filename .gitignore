@@ -1,7 +1,7 @@
 /content/
-compose.env
 /tomcat-users.xml
 /logs
 /tds
 /tdm
 /data
+/compose.env
