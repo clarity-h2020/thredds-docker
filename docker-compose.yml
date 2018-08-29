@@ -44,8 +44,8 @@ services:
           source: ./tds
           target: /usr/local/tomcat/content/thredds
         - type: bind
-          source: ./data
-          target: /data
+          source: /data
+          target: /import
     env_file:
       - "compose.env"
     environment:
@@ -70,6 +70,9 @@ services:
         - type: volume
           source: webapps
           target: /usr/local/tomcat/webapps
+        - type: volume
+          source: catalina
+          target: /usr/local/tomcat/conf/Catalina/localhost
         #- type: volume
         #  source: conf
         #  target: /usr/local/tomcat/conf/Catalina/localhost
@@ -89,8 +92,8 @@ services:
           source: ./tds
           target: /usr/local/tomcat/content/thredds
         - type: bind
-          source: ./data
-          target: /data
+          source: /data
+          target: /import
           # TDM logging non-configurable until 5.0 so you'll need tdm.sh and
           # tdm.jar if you want to log outside the container :-(
         - type: bind
@@ -100,8 +103,8 @@ services:
       - "compose.env"
       
 volumes:
-    conf:
-        name: ${COMPOSE_PROJECT_NAME}_tomcat_conf
+    catalina:
+        name: ${COMPOSE_PROJECT_NAME}_tomcat_catalina
         driver: local
     webapps:
         name: ${COMPOSE_PROJECT_NAME}_tomcat_webapps

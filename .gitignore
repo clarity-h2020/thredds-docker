@@ -1,7 +1,9 @@
 /content/
 /tomcat-users.xml
 /logs
-/tds
-/tdm
+/tds/cache
+/tds/logs
+/tds/public
+/tdm/log
 /data
 /compose.env

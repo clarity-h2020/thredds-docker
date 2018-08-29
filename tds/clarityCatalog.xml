@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog xmlns="http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0" xmlns:xlink="http://www.w3.org/1999/xlink" 
+   name="Unidata THREDDS-IDD NetCDF-OpenDAP Server" version="1.0.1">
+
+	<service name="latest" serviceType="Resolver" base="" />
+	<service name="all" serviceType="Compound" base="">
+		<service name="odap" serviceType="OpenDAP" base="/thredds/dodsC/" />
+		<service name="dap4" serviceType="DAP4" base="/thredds/dap4/" />
+		<service name="http" serviceType="HTTPServer" base="/thredds/fileServer/" />
+		<service name="wcs" serviceType="WCS" base="/thredds/wcs/" />
+		<service name="wms" serviceType="WMS" base="/thredds/wms/" />
+	</service>
+
+	<dataset name="EURO-CORDEX Data">
+		<metadata inherited="true">
+			<authority>myclimateservice.eu</authority>
+			<dataType>Grid</dataType>
+			<dataFormat>NetCDF</dataFormat>
+			<serviceName>all</serviceName>
+			<!--<documentation type="rights">Freely available</documentation>
+			<documentation xlink:href="http://www.emc.ncep.noaa.gov/modelinfo/index.html" xlink:title="NCEP Model documentation"/>
+			<creator>
+        <name vocabulary="DIF">DOC/NOAA/NWS/NCEP</name>
+        <contact url="http://www.ncep.noaa.gov/" email="http://www.ncep.noaa.gov/mail_liaison.shtml" />
+      </creator>
+      <publisher>
+        <name vocabulary="DIF">UCAR/UNIDATA</name>
+        <contact url="http://www.unidata.ucar.edu/" email="support@unidata.ucar.edu" />
+      </publisher>
+      <timeCoverage>
+        <end>present</end>
+        <duration>14 days</duration>
+      </timeCoverage>-->
+		</metadata>
+
+		<datasetScan name="EURO-CORDEX HazardMaps" ID="HazardMapsScan"
+               path="EURO-CORDEX/HazardMaps" location="/import/EURO-CORDEX/HazardMaps">
+			<metadata inherited="true">
+				<serviceName>all</serviceName>
+				<dataType>Grid</dataType>
+				<dataFormat>NetCDF</dataFormat>
+			</metadata>
+
+			<filter>
+				<include wildcard="*.nc" />
+			</filter>
+
+			<addID/>
+			<sort>
+				<lexigraphicByName increasing="false"/>
+			</sort>
+			<addLatest/>
+			<addDatasetSize/>
+		</datasetScan>
+	</dataset>
+	
+	<dataset name="MUKLIMO Data">
+		<metadata inherited="true">
+        <documentation type="summary">
+- example output files from the urban climate model MUKLIMO_3 using the cuboid method 
+- contains the mean annual number of summer days for the period 1981-2010
+- netCDF and ASCII format
+- can be used to produce heat load maps in terms of climate indicators 
+- coverage: city of Linz and surroundings
+- Coordinate Reference System: EPSG:3035 (ETRS89, LAEA)
+		</documentation>			<authority>myclimateservice.eu</authority>
+			<dataType>Grid</dataType>
+			<dataFormat>NetCDF</dataFormat>
+			<serviceName>all</serviceName>
+			<documentation type="rights">Freely available</documentation>
+			
+		</metadata>
+
+		<datasetScan name="Linz_number_of_summerdays_1981-2010" ID="MUKLIMOScan"
+               path="MUKLIMO/Linz" location="/import/MUKLIMO_3">
+			<metadata inherited="true">
+				<serviceName>all</serviceName>
+				<dataType>Grid</dataType>
+				<dataFormat>NetCDF</dataFormat>
+			</metadata>
+
+			<filter>
+				<include wildcard="*.nc" />
+			</filter>
+
+			<addID/>
+			<sort>
+				<lexigraphicByName increasing="false"/>
+			</sort>
+			<addLatest/>
+			<addDatasetSize/>
+		</datasetScan>
+	</dataset>
+	
+	<dataset name="SWICCA Data">
+		<metadata inherited="true">
+        <documentation type="summary"></documentation>			
+		<authority>myclimateservice.eu</authority>
+			<dataType>Grid</dataType>
+			<dataFormat>NetCDF</dataFormat>
+			<serviceName>all</serviceName>
+			<documentation type="rights">Freely available</documentation>
+			
+		</metadata>
+
+		<datasetScan name="SWICCA" ID="SWICCAScan"
+               path="SWICCA/Linz" location="/import/SWICCA">
+			<metadata inherited="true">
+				<serviceName>all</serviceName>
+				<dataType>Grid</dataType>
+				<dataFormat>NetCDF</dataFormat>
+			</metadata>
+
+			<filter>
+				<include wildcard="*.nc" />
+			</filter>
+
+			<addID/>
+			<sort>
+				<lexigraphicByName increasing="false"/>
+			</sort>
+			<addLatest/>
+			<addDatasetSize/>
+		</datasetScan>
+	</dataset>
+</catalog>
+
